@@ -10,7 +10,14 @@ public class BoardVO {
 	private String r_dt;
 	private String m_dt;
 	private String user_nm;
+	private int likey;
 	
+	public int getLikey() {
+		return likey;
+	}
+	public void setLikey(int likey) {
+		this.likey = likey;
+	}
 	public String getUser_nm() {
 		return user_nm;
 	}

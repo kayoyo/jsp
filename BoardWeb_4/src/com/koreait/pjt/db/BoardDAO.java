@@ -65,17 +65,25 @@ public class BoardDAO {
 		
 	}
 	public static BoardVO detailBoard(BoardVO param) {
-		String sql = " SELECT A.i_board, A.title, A.ctnt, B.user_nm, A.i_user, A.r_dt, A.hits "
+		/*String sql = " SELECT A.i_board, A.title, A.ctnt, B.user_nm, A.i_user, A.r_dt, A.hits "
 				+ " FROM t_board4 A "
 				+ " inner join t_user B "
 				+ " on A.i_user = B.i_user "
-				+ " WHERE A.i_board = ? ";
+				+ " WHERE A.i_board = ? ";*/
+		
+		String sql = " select A.*, B.user_nm, decode(C.i_user, null, 0, 1) as likey "
+				+ " from t_board4 A "
+				+ " inner join t_user B "
+				+ " on A.i_user = B.i_user "
+				+ " left join t_board4_like C "
+				+ " on A.i_board = C.i_board and c.i_user = ? where A.i_board = ? ";
 		
 		int resultInt = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
 			@Override
 			public void prepared(PreparedStatement ps) throws SQLException {
-				ps.setInt(1, param.getI_board());	
+				ps.setInt(1, param.getI_user());
+				ps.setInt(2, param.getI_board());
 			}
 
 			@Override
@@ -84,24 +92,25 @@ public class BoardDAO {
 					int i_board = rs.getInt("i_board");
 					String title = rs.getNString("title");
 					String ctnt = rs.getNString("ctnt");
-					String nm = rs.getNString("user_nm");
+					String user_nm = rs.getNString("user_nm");
 					String r_dt = rs.getNString("r_dt");
 					int hits = rs.getInt("hits");
 					int i_user = rs.getInt("i_user");
+					int likey = rs.getInt("likey");
 					
 					param.setI_user(i_board);
 					param.setTitle(title);
 					param.setCtnt(ctnt);
-					param.setUser_nm(nm);
+					param.setUser_nm(user_nm);
 					param.setR_dt(r_dt);
 					param.setHits(hits);
 					param.setI_user(i_user);
+					param.setLikey(likey);
 					
 					} 
 				return 1;				
 				}
 		});
-		
 		return param;
 	}
 	
@@ -119,7 +128,6 @@ public class BoardDAO {
 		
 	}
 		
-	
 	
 		public static int upBoard(BoardVO param) {
 		
@@ -161,6 +169,13 @@ public class BoardDAO {
 				
 				
 			});  
+		}
+		
+		public static int likey(BoardVO param) {
+			
+			String sql = "insert into t_board4_like (i_board, i_user) values (?, ?)";
+			return 0;
+			
 		}
 
 }

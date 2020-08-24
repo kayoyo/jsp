@@ -12,6 +12,7 @@ import com.koreait.pjt.Const;
 import com.koreait.pjt.MyUtils;
 import com.koreait.pjt.ViewResolver;
 import com.koreait.pjt.db.UserDAO;
+import com.koreait.pjt.vo.LoginHistroryVO;
 import com.koreait.pjt.vo.UserVO;
 
 
@@ -21,7 +22,10 @@ public class LoginSer extends HttpServlet {
        
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		if(request.getRemoteAddr().equals("192.168.2.6")) {		
+			response.sendRedirect("/blockip");
+		}
+		
 		ViewResolver.forword("user/login", request, response);
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,12 +54,56 @@ public class LoginSer extends HttpServlet {
 			return;
 		}
 		
+		//로그인 히스토리 기록
+		String agent = request.getHeader("User-Agent");
+		System.out.println("agent : " + agent);
+		String os = getOs(agent);
+		String browser = getBrowser(agent);
+		String ip_addr = request.getRemoteAddr();
+		
+		System.out.println("os : " + os);
+		System.out.println("browser : " + browser);
+		System.out.println("ip_addr : " + ip_addr);
+		
+		LoginHistroryVO ulhVO = new LoginHistroryVO();
+		ulhVO.setI_user(param.getI_user());
+		ulhVO.setOs(os);
+		ulhVO.setIp_addr(ip_addr);
+		ulhVO.setBrowser(browser);
+		UserDAO.insUserLoginHistory(ulhVO);
+		
+		
 		HttpSession hs = request.getSession();
 		hs.setAttribute(Const.LOGIN_USER, param);
 		
 		System.out.println("로그인 성공");
 		response.sendRedirect("/board/list");
 		
+	}
+	private String getBrowser(String agent) {
+		if(agent.toLowerCase().contains("msie")) {
+			return "ie";
+		} else if(agent.toLowerCase().contains("chrome")) {
+			return "chrome";
+		} else if(agent.toLowerCase().contains("safari")) {
+			return "safari";
+		}
+		return "";
+	}
+	private String getOs(String agent) {
+	
+		if(agent.contains("mac")) {
+			return "mac";
+		} else if(agent.toLowerCase().contains("windows")) {
+			return "windows";
+		} else if(agent.toLowerCase().contains("x11")) {
+			return "linux";
+		} else if(agent.toLowerCase().contains("android")) {
+			return "android";
+		} else if(agent.toLowerCase().contains("iphone")) {
+			return "ios";
+		}
+		return "";
 	}
 
 }

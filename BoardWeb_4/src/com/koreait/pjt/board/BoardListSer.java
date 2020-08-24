@@ -25,6 +25,7 @@ public class BoardListSer extends HttpServlet {
 		
 		List<BoardVO> list = BoardDAO.selBoardList();
 		request.setAttribute("list", list);
+		request.setAttribute("name", "loginUser");
 		
 		ViewResolver.forwordLoginChk("board/list", request, response);
 				

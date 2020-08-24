@@ -26,6 +26,7 @@
 <div>작성자 : ${data.user_nm}</div>
 <div>조회수 : ${data.hits}</div>
 <div>작성일자 : ${data.r_dt}</div>	
+<div>좋아요 : ${data.likey}</div>
 <script>
 		function submitDel() {
 			delFrm.submit()

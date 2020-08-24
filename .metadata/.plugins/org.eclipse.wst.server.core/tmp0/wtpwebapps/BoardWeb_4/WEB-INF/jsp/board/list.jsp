@@ -13,6 +13,7 @@
 <title>리스트</title>
 </head>
 <body>
+<button><a href="/logout">로그아웃</a></button><br><br>
 <div>${loginUser.user_name}님 환영합니다.</div>
 <div>
 <button><a href="/board/regmod">글쓰기</a></button>
@@ -27,7 +28,7 @@
 <th>작성날짜</th>
 </tr>
 <c:forEach items="${list}" var="item">
-<tr class="listRow"  onclick="moveToDetail(${item.i_board})">
+<tr onclick="moveToDetail(${item.i_board})">
 <td>${item.i_board}</td>
 <td>${item.title}</td>
 <td>${item.hits}</td>
