@@ -43,19 +43,22 @@ public class BoardDetailSer extends HttpServlet {
 		param.setI_board(i_board);
 		param.setI_user(loginUser.getI_user());
 		
-		//단독으로 조회수 올리기 방지! -- [start]
+		//단독으로 조회수 올리기 방지! -- [start] 
 		ServletContext application = getServletContext(); //어플리케이션 내장객체 얻어오기
 		Integer readI_user = (Integer) application.getAttribute("read_" + strI_board);
-		//I nteger은 int랑 같이 쓰면됨 다만, null이 있음
+		
+//		System.out.println("if문 바깥 readI_user : " + readI_user);
+//		System.out.println("if문 바깥 loginuser : " + loginUser.getI_user());
 		if(readI_user==null || readI_user!= loginUser.getI_user()) {
 			BoardDAO.addHits(param);
 			application.setAttribute("read_" + strI_board, loginUser.getI_user());
+//			System.out.println("if문 안 readI_user : " + readI_user);
+//			System.out.println("if문 안 loginuser : " + loginUser.getI_user());
 		}
 		//단독으로 조회수 올리기 방지! -- [end]
 		
 		BoardVO data = BoardDAO.detailBoard(param);
 		request.setAttribute("data", data);
-		BoardDAO.addHits(param);
 		
 		ViewResolver.forword("board/detail", request, response);
 		

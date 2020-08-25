@@ -12,7 +12,9 @@ public class BoardDAO {
 	public static List<BoardVO> selBoardList(){
 		final List<BoardVO> list = new ArrayList(); //객체의 주소값을 변경할 수 없다. 값을 추가 할 수는 있다.
 		
-		String sql = "select i_board, title, hits, i_user, r_dt from t_board4 order by i_board desc";
+		String sql = "select i_board, title, hits, i_user, r_dt "
+				+ " , (SELECT count(*) FROM t_board4_like where i_board = A.i_board) as like_cnt "
+				+ " from t_board4 A order by i_board desc ";
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 		
 
@@ -28,6 +30,7 @@ public class BoardDAO {
 					int hits = rs.getInt("hits");
 					int i_user = rs.getInt("i_user");
 					String r_dt = rs.getNString("r_dt");
+					int like_cnt = rs.getInt("like_cnt");
 					
 					BoardVO vo = new BoardVO();
 					vo.setI_board(i_board);
@@ -35,6 +38,7 @@ public class BoardDAO {
 					vo.setHits(hits);
 					vo.setI_user(i_user);
 					vo.setR_dt(r_dt);
+					vo.setLike_cnt(like_cnt);
 					
 					list.add(vo);
 				}			
@@ -72,18 +76,22 @@ public class BoardDAO {
 				+ " WHERE A.i_board = ? ";*/
 		
 		String sql = " select A.*, B.user_nm, decode(C.i_user, null, 0, 1) as likey "
+				+ ", (SELECT count(*) FROM t_board4_like where i_board = ?) as like_cnt "
 				+ " from t_board4 A "
 				+ " inner join t_user B "
 				+ " on A.i_user = B.i_user "
 				+ " left join t_board4_like C "
 				+ " on A.i_board = C.i_board and c.i_user = ? where A.i_board = ? ";
+		//i_user : 로그인 한 사람, i_board : 선택된 게시글
 		
 		int resultInt = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
 			@Override
 			public void prepared(PreparedStatement ps) throws SQLException {
-				ps.setInt(1, param.getI_user());
-				ps.setInt(2, param.getI_board());
+				ps.setInt(1, param.getI_board());
+				ps.setInt(2, param.getI_user());
+				ps.setInt(3, param.getI_board());
+				
 			}
 
 			@Override
@@ -97,6 +105,7 @@ public class BoardDAO {
 					int hits = rs.getInt("hits");
 					int i_user = rs.getInt("i_user");
 					int likey = rs.getInt("likey");
+					int like_cnt = rs.getInt("like_cnt");
 					
 					param.setI_user(i_board);
 					param.setTitle(title);
@@ -104,8 +113,9 @@ public class BoardDAO {
 					param.setUser_nm(user_nm);
 					param.setR_dt(r_dt);
 					param.setHits(hits);
-					param.setI_user(i_user);
+					param.setI_user(i_user); //작성자
 					param.setLikey(likey);
+					param.setLike_cnt(like_cnt);
 					
 					} 
 				return 1;				
@@ -173,12 +183,46 @@ public class BoardDAO {
 		
 		public static int likey(BoardVO param) {
 			
-			String sql = "insert into t_board4_like (i_board, i_user) values (?, ?)";
-			return 0;
+			String sql = " insert into t_board4_like (i_board, i_user) values (?, ?) ";
+			
+			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
+
+				@Override
+				public int update(PreparedStatement ps) throws SQLException { 
+					ps.setInt(1, param.getI_board());
+					ps.setInt(2, param.getI_user());
+						
+					return ps.executeUpdate();
+				}	
+				
+			});
 			
 		}
+		
+		public static int unlikey(BoardVO param) {
+			
+			String sql = " delete from t_board4_like where i_board=? and i_user=? ";
+			
+			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
+				@Override
+				public int update(PreparedStatement ps) throws SQLException { 
+					ps.setInt(1, param.getI_board());
+					ps.setInt(2, param.getI_user());
+						
+					return ps.executeUpdate();
+				}	
+				
+			});
+			
+			
+		}
+		
+		
+			
 }
+
+
 	
 
 

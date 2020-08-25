@@ -24,6 +24,7 @@
 <th>번호</th>
 <th>제목</th>
 <th>조회수</th>
+<th>좋아요</th>
 <th>작성자</th>
 <th>작성날짜</th>
 </tr>
@@ -32,6 +33,7 @@
 <td>${item.i_board}</td>
 <td>${item.title}</td>
 <td>${item.hits}</td>
+<td>${item.like_cnt}</td>
 <td>${item.i_user}</td>
 <td>${item.r_dt}</td>
 </tr>

@@ -1,11 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>상세 페이지</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+<style>
+.material-icons {}
+</style>
 </head>
 <body>
 <div>
@@ -26,10 +32,20 @@
 <div>작성자 : ${data.user_nm}</div>
 <div>조회수 : ${data.hits}</div>
 <div>작성일자 : ${data.r_dt}</div>	
-<div>좋아요 : ${data.likey}</div>
+<div onclick="like(${data.likey})"> 좋아요 : 
+			 <c:if test = "${data.likey == 0}">
+             <span class="material-icons">sentiment_very_dissatisfied</span></c:if>
+			 <c:if test = "${data.likey == 1}">
+			 <span class="material-icons">sentiment_very_satisfied</span></c:if>
+</div>
+<div>좋아요 수 : ${data.like_cnt}</div>
 <script>
 		function submitDel() {
 			delFrm.submit()
+		}
+		function like(likey) {		
+			location.href='/like?i_board=${data.i_board}&likey=${data.likey}';
+			
 		}
 	</script>
 </body>
