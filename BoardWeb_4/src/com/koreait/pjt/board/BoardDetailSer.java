@@ -1,6 +1,7 @@
 package com.koreait.pjt.board;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -10,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.koreait.pjt.db.BoardCmtDAO;
 import com.koreait.pjt.db.BoardDAO;
+import com.koreait.pjt.vo.BoardCmtVO;
 import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
 import com.koreait.pjt.Const;
@@ -34,7 +37,7 @@ public class BoardDetailSer extends HttpServlet {
 		String strI_board = request.getParameter("i_board");
 		int i_board = Integer.parseInt(strI_board);
 		
-		if(i_board==0) {
+		if(i_board == 0) {
 			response.sendRedirect("/board/list");
 			return;
 		}
@@ -56,6 +59,8 @@ public class BoardDetailSer extends HttpServlet {
 //			System.out.println("if문 안 loginuser : " + loginUser.getI_user());
 		}
 		//단독으로 조회수 올리기 방지! -- [end]
+		
+		request.setAttribute("cmtList", BoardCmtDAO.selCmtList(i_board));
 		
 		BoardVO data = BoardDAO.detailBoard(param);
 		request.setAttribute("data", data);

@@ -57,12 +57,10 @@ public class BoardDAO {
 		return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
 			@Override
-			public int update(PreparedStatement ps) throws SQLException { //sql로 ps를 만들어서  ps를받음
+			public void update(PreparedStatement ps) throws SQLException { //sql로 ps를 만들어서  ps를받음
 				ps.setNString(1, param.getTitle());
 				ps.setNString(2, param.getCtnt());
 				ps.setInt(3, param.getI_user());
-				
-				return ps.executeUpdate();
 			}	
 			
 		});
@@ -130,9 +128,8 @@ public class BoardDAO {
 		
 			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 				@Override
-				public int update(PreparedStatement ps) throws SQLException {				
+				public void update(PreparedStatement ps) throws SQLException {				
 				ps.setInt(1, param.getI_board());
-				return ps.executeUpdate();
 			}
 		});
 		
@@ -145,13 +142,12 @@ public class BoardDAO {
 		return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
 			@Override
-			public int update(PreparedStatement ps) throws SQLException {
+			public void update(PreparedStatement ps) throws SQLException {
 				
 				ps.setNString(1, param.getTitle());
 				ps.setNString(2, param.getCtnt());
 				ps.setInt(3, param.getI_board());
 				
-				return ps.executeUpdate();
 			}
 			
 			
@@ -167,14 +163,11 @@ public class BoardDAO {
 			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
 				@Override
-				public int update(PreparedStatement ps) throws SQLException {
-					
+				public void update(PreparedStatement ps) throws SQLException {					
 					int addhits = param.getHits() + 1;
 					ps.setInt(1, addhits);
 					ps.setInt(2, param.getI_board());
 					param.setHits(addhits);
-					
-					return ps.executeUpdate();
 				}
 				
 				
@@ -188,11 +181,10 @@ public class BoardDAO {
 			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
 				@Override
-				public int update(PreparedStatement ps) throws SQLException { 
+				public void update(PreparedStatement ps) throws SQLException { 
 					ps.setInt(1, param.getI_board());
 					ps.setInt(2, param.getI_user());
-						
-					return ps.executeUpdate();
+
 				}	
 				
 			});
@@ -206,11 +198,10 @@ public class BoardDAO {
 			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
 				@Override
-				public int update(PreparedStatement ps) throws SQLException { 
+				public void update(PreparedStatement ps) throws SQLException { 
 					ps.setInt(1, param.getI_board());
 					ps.setInt(2, param.getI_user());
-						
-					return ps.executeUpdate();
+					
 				}	
 				
 			});

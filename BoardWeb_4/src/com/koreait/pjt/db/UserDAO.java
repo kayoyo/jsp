@@ -17,12 +17,11 @@ public class UserDAO {
 			//new JdbcUpdateInterface() : 인터페이스를 객체화 한 것이 아님 
 			
 			@Override
-			public int update(PreparedStatement ps) throws SQLException {
+			public void update(PreparedStatement ps) throws SQLException {
 				ps.setNString(1, param.getUser_id());
 				ps.setNString(2, param.getUser_pw());
 				ps.setNString(3, param.getUser_name());
-				ps.setNString(4, param.getUser_email());
-				return ps.executeUpdate();
+				ps.setNString(4, param.getUser_email());				
 			}
 		});
 	}
@@ -70,13 +69,11 @@ public class UserDAO {
 			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
 				@Override
-				public int update(PreparedStatement ps) throws SQLException {
+				public void update(PreparedStatement ps) throws SQLException {
 					ps.setInt(1, ulhVO.getI_user());
 					ps.setNString(2, ulhVO.getIp_addr());
 					ps.setNString(3, ulhVO.getOs());
 					ps.setNString(4, ulhVO.getBrowser());
-					
-					return ps.executeUpdate();
 				}
 				
 			});

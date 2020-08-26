@@ -1,0 +1,22 @@
+package com.koreait.pjt.db;
+
+public class BoardCmtDAO {
+	
+	public static int insCmt() {
+		
+		
+		
+		return 0;
+		
+	}
+	
+	public static int updCmt() {
+		return 0;
+		
+	}
+	
+	public static int delCmt() {
+		return 0;
+	}
+
+}

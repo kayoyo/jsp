@@ -15,7 +15,7 @@ public class Dbconn {
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		Connection conn = DriverManager.getConnection(url, username, password);
 		
-		System.out.println("접속 성공"); 
+		//System.out.println("접속 성공"); 
 		return conn;
 		
 	}

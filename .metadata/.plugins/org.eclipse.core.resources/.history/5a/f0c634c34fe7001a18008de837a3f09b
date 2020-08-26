@@ -1,0 +1,78 @@
+package com.koreait.pjt.db;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.koreait.pjt.vo.BoardCmtVO;
+
+public class BoardCmtDAO {
+	
+	public static int insCmt(BoardCmtVO param) {
+		
+		String sql = " insert into t_board_cmt(i_cmt, i_board, i_user, cmt) values (seq_t_board_cmt.nextval, ?, ?, ?)";
+		
+		return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
+
+			@Override
+			public void update(PreparedStatement ps) throws SQLException {
+				
+				ps.setInt(1, param.getI_board());
+				ps.setInt(2, param.getI_user());
+				ps.setNString(3, param.getCmt());
+				
+			}
+			
+		});
+		
+	}
+	
+	public static List<BoardCmtVO> selCmtList(){
+		List<BoardCmtVO> list = new ArrayList();
+		
+		String sql = " select A.cmt, A.r_dt, A.i_board, B.user_nm from t_board_cmt " 
+					+ " left join t_user B " 
+					+ " on A.i_user = B.i_user ";
+		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException {}
+
+			@Override
+			public int executeQuery(ResultSet rs) throws SQLException {
+				
+				while(rs.next()) {
+					int i_board = rs.getInt("i_board");
+					String cmt = rs.getNString("cmt");
+					String r_dt = rs.getNString("r_dt");
+					String user_nm = rs.getNString("user_nm");
+					
+					BoardCmtVO vo = new BoardCmtVO();
+					vo.setI_board(i_board);
+					vo.setCmt(cmt);
+					vo.setR_dt(r_dt);
+					vo.setUser_nm(user_nm);
+					
+					list.add(vo);		
+				}
+				return 1;
+			}
+			
+		});
+		
+		return list;
+		
+	}
+	
+	public static int updCmt() {
+		return 0;
+		
+	}
+	
+	public static int delCmt() {
+		return 0;
+	}
+
+}

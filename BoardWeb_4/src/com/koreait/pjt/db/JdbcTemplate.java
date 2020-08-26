@@ -1,5 +1,8 @@
 package com.koreait.pjt.db;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class JdbcTemplate {
 	
@@ -15,8 +18,8 @@ public class JdbcTemplate {
 		try {
 			conn = Dbconn.getConn();
 			ps = conn.prepareStatement(sql);	
-			result = jdbc.update(ps);
-			
+			jdbc.update(ps);
+			result = ps.executeUpdate();
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
