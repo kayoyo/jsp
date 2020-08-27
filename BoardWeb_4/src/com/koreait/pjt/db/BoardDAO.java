@@ -9,18 +9,28 @@ import java.util.List;
 import com.koreait.pjt.vo.BoardVO;
 
 public class BoardDAO {
-	public static List<BoardVO> selBoardList(){
+	public static List<BoardVO> selBoardList(BoardDomain param){
 		final List<BoardVO> list = new ArrayList(); //객체의 주소값을 변경할 수 없다. 값을 추가 할 수는 있다.
 		
-		String sql = "select i_board, title, hits, i_user, r_dt "
+		String sql = " select A.* from "		
+				+ " ( select rownum as rnum, A.* from "
+				+ " ( select i_board, title, hits, i_user, r_dt "
 				+ " , (SELECT count(*) FROM t_board4_like where i_board = A.i_board) as like_cnt "
-				+ " from t_board4 A order by i_board desc ";
+				+ " from t_board4 A order by i_board desc ) A "
+				+ " where rownum <= ? ) A "
+				+ " where A.rnum > ? ";
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 		
 
 			@Override
-			public void prepared(PreparedStatement ps) throws SQLException {}
-
+			public void prepared(PreparedStatement ps) throws SQLException {
+				
+				ps.setInt(1, param.geteIdx()); //~까지
+				ps.setInt(2, param.getsIdx()); //~부터
+			}
+			//eidx = p * r
+			//sidx = eidx - r 
+			
 			@Override
 			public int executeQuery(ResultSet rs) throws SQLException {
 				
@@ -206,6 +216,29 @@ public class BoardDAO {
 				
 			});
 			
+			
+		}
+		
+		//페이지 숫자 가져오기
+		public static int selPagingCnt(final BoardDomain param) {
+			String sql = " select ceil(count(i_board) / ?) from t_board4 ";
+			return JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+
+				@Override
+				public void prepared(PreparedStatement ps) throws SQLException {
+					ps.setInt(1, param.getRecord_cnt());
+					
+				}
+
+				@Override
+				public int executeQuery(ResultSet rs) throws SQLException {
+					if(rs.next()) {
+						return rs.getInt(1); //첫번째 열값을 인덱스로 가져와서 리턴
+					}
+					return 0;
+				}
+				
+			});
 			
 		}
 		

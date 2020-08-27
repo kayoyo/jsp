@@ -29,7 +29,8 @@
 <fullyQualifiedTypeName name="com.koreait.pjt.db.JdbcSelectInterface"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.vo.BoardVO"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.vo.BoardCmtVO"/>
-<fullyQualifiedTypeName name="com.koreait.pjt.MyUtils"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardCmtDAO"/>
+<fullyQualifiedTypeName name="com.koreait.pjt.db.BoardDomain"/>
+<fullyQualifiedTypeName name="com.koreait.pjt.MyUtils"/>
 </qualifiedTypeNameHistroy>

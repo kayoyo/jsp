@@ -18,12 +18,12 @@
 <body>
 <div>
 <!-- 삭제 버튼을 누르면 post방식으로 action의 주소로 날라감 -->
-	<a href="/board/list">리스트</a>
+	<a href="/board/list"><button>리스트</button></a>
 	<c:if test = "${loginUser.i_user == data.i_user}">
-		<a href="/board/regmod?i_board=${data.i_board}">수정</a>
+		<a href="/board/regmod?i_board=${data.i_board}"><button>수정</button></a>
 		<form id="delFrm" action="/board/del" method="post">
 		<input type="hidden" name="i_board" value="${data.i_board}">
-		<a href="#" onclick="submitDel()">삭제</a> 
+		<a href="#" onclick="submitDel()"><button>삭제</button></a> 
 		</form>			
 	</c:if> 
 </div>
@@ -34,19 +34,20 @@
 <div>작성자 : ${data.user_nm}</div>
 <div>조회수 : ${data.hits}</div>
 <div>작성일자 : ${data.r_dt}</div>	
-<div onclick="like(${data.likey})"> 좋아요 : 
+<div onclick="like(${data.likey})"> 
 			 <c:if test = "${data.likey == 0}">
-             <span class="material-icons">thumb_up_alt</span></c:if>
+             <span class="material-icons">thumb_up_alt : 좋아요</span></c:if>
 			 <c:if test = "${data.likey == 1}">
-			 <span class="material-icons">thumb_down_alt</span></c:if>
+			 <span class="material-icons">thumb_down_alt : 싫어요</span></c:if>
 </div>
-<div>좋아요 수 : ${data.like_cnt}</div>
+<div> 공감 : ${data.like_cnt}</div>
 <div><form id="cmtFrm" action="/board/cmt" method="post">
-	<input type="hidden" name="i_cmt" value="0" class=i_cmtNum> <!-- 서버로 값을 보냄 0 또는 1(스위치 구문 처리) --> 
+	<input type="hidden" name="i_cmt" value="0" class="i_cmtNum"> <!-- 서버로 값을 보냄 0 또는 1(스위치 구문 처리) --> 
 	<input type="hidden" name="i_board" value="${data.i_board}">
 	<div>
-	<input type="text" name="cmt" placeholder="댓글내용" class=cmtBox> <!-- 수정할 값을 댓글창에 띄우는 용도-->
-	<input type="submit" value="등록">
+	<input type="text" name="cmt" placeholder="댓글내용" class="cmtBox"> <!-- 수정할 값을 댓글창에 띄우는 용도-->
+	<input type="submit" value="등록" id="cmtSubmit">
+	<input type="button" value="취소" onclick="cmtCancel()">
 	</div>
 	</form>
 </div>
@@ -67,10 +68,8 @@
 <td>${item.r_dt}</td>
 <td>
 <c:if test = "${loginUser.i_user == item.i_user}">
-	<a href="/board/cmt?i_cmt=${item.i_cmt}&i_board=${data.i_board}">삭제</a>
-	<form id="cmtFrm" action="/board/cmt" method="post">
-	<a href="#" onclick="upBtn('${item.cmt}', '${item.i_cmt}')">수정</a>
-	</form>
+	<button onclick="delBtn(${item.i_cmt})" >삭제</button>
+	<button onclick="upBtn(${item.i_cmt}, '${item.cmt}')">수정</button>
 </c:if> 
 </td>
 </tr>
@@ -78,17 +77,34 @@
 </table>
 <script>
 		function submitDel() {
-			delFrm.submit()
+			if(confirm('삭제하시겠습니까?')){
+				delFrm.submit()
+				
+			}
 		}
-		function like(likey) {		
-			location.href='/like?i_board=${data.i_board}&likey=${data.likey}';	
-		}
-		function upBtn(cmt1, cmt2){
-			let cmt1 = document.querySelector(".i_cmtNum")
-			i_cmtNum.setAttribute("value",cmt1);
+		
+		function upBtn(i_cmt, cmt){
+			//console.log('i_cmt: ' + i_cmt)
+			cmtFrm.i_cmt.value = i_cmt
+			cmtFrm.cmt.value = cmt
+			cmtSubmit.value = '수정'
 			
-			let cmt2 = document.querySelector(".cmtBox")
-			cmtBox.setAttribute("value",cmt2);			 
+		}
+		
+		function cmtCancel() {
+			cmtFrm.i_cmt.value = 0
+			cmtFrm.cmt.value = ''
+			cmtSubmit.value = '등록'		
+		} 
+		
+		function delBtn(i_cmt) {
+			if(confirm('삭제하시겠습니까?')){
+				location.href= '/board/cmt?i_cmt=${item.i_cmt}&i_board=${data.i_board}' + i_cmt 
+			}
+		}
+		
+		function like(likey) {		
+			location.href= '/like?i_board=${data.i_board}&likey=${data.likey}';	
 		}
 	</script>
 </body>
