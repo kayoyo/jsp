@@ -16,7 +16,7 @@ public class BoardDAO {
 				+ " ( select rownum as rnum, A.* from "
 				+ " ( select i_board, title, hits, i_user, r_dt "
 				+ " , (SELECT count(*) FROM t_board4_like where i_board = A.i_board) as like_cnt "
-				+ " from t_board4 A order by i_board desc ) A "
+				+ " from t_board4 A where title like ? order by i_board desc ) A "
 				+ " where rownum <= ? ) A "
 				+ " where A.rnum > ? ";
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
@@ -25,8 +25,9 @@ public class BoardDAO {
 			@Override
 			public void prepared(PreparedStatement ps) throws SQLException {
 				
-				ps.setInt(1, param.geteIdx()); //~까지
-				ps.setInt(2, param.getsIdx()); //~부터
+				ps.setNString(1, param.getSearchText());
+				ps.setInt(2, param.geteIdx()); //~까지
+				ps.setInt(3, param.getsIdx()); //~부터
 			}
 			//eidx = p * r
 			//sidx = eidx - r 
@@ -83,7 +84,7 @@ public class BoardDAO {
 				+ " on A.i_user = B.i_user "
 				+ " WHERE A.i_board = ? ";*/
 		
-		String sql = " select A.*, B.user_nm, decode(C.i_user, null, 0, 1) as likey "
+		String sql = " select A.*, B.user_nm, decode(C.i_user, null, 0, 1) as like_ "
 				+ ", (SELECT count(*) FROM t_board4_like where i_board = ?) as like_cnt "
 				+ " from t_board4 A "
 				+ " inner join t_user B "
@@ -91,6 +92,7 @@ public class BoardDAO {
 				+ " left join t_board4_like C "
 				+ " on A.i_board = C.i_board and c.i_user = ? where A.i_board = ? ";
 		//i_user : 로그인 한 사람, i_board : 선택된 게시글
+		//like가 예약어라서 실행안됨, 검색어 like가 작동함
 		
 		int resultInt = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
@@ -112,7 +114,7 @@ public class BoardDAO {
 					String r_dt = rs.getNString("r_dt");
 					int hits = rs.getInt("hits");
 					int i_user = rs.getInt("i_user");
-					int likey = rs.getInt("likey");
+					int like = rs.getInt("like_");
 					int like_cnt = rs.getInt("like_cnt");
 					
 					param.setI_user(i_board);
@@ -122,7 +124,7 @@ public class BoardDAO {
 					param.setR_dt(r_dt);
 					param.setHits(hits);
 					param.setI_user(i_user); //작성자
-					param.setLikey(likey);
+					param.setLike(like);
 					param.setLike_cnt(like_cnt);
 					
 					} 
@@ -184,7 +186,7 @@ public class BoardDAO {
 			});  
 		}
 		
-		public static int likey(BoardVO param) {
+		public static int like(BoardVO param) {
 			
 			String sql = " insert into t_board4_like (i_board, i_user) values (?, ?) ";
 			
@@ -201,9 +203,9 @@ public class BoardDAO {
 			
 		}
 		
-		public static int unlikey(BoardVO param) {
+		public static int unlike(BoardVO param) {
 			
-			String sql = " delete from t_board4_like where i_board=? and i_user=? ";
+			String sql = " delete t_board4_like where i_board=? and i_user=? ";
 			
 			return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
 
@@ -221,12 +223,13 @@ public class BoardDAO {
 		
 		//페이지 숫자 가져오기
 		public static int selPagingCnt(final BoardDomain param) {
-			String sql = " select ceil(count(i_board) / ?) from t_board4 ";
+			String sql = " select ceil(count(i_board) / ?) from t_board4 where title like ? "; //'%' || ? || '%'
 			return JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
 				@Override
 				public void prepared(PreparedStatement ps) throws SQLException {
 					ps.setInt(1, param.getRecord_cnt());
+					ps.setNString(2, param.getSearchText());
 					
 				}
 

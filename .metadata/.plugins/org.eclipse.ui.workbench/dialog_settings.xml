@@ -9,4 +9,6 @@
 			<item value="org.eclipse.tm4e.ui.wizards"/>
 		</list>
 	</section>
+	<section name="org.eclipse.ui.preferences.keysPreferencePage">
+	</section>
 </section>

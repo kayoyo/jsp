@@ -82,7 +82,7 @@ public class LoginSer extends HttpServlet {
 	}
 	private String getBrowser(String agent) {
 		if(agent.toLowerCase().contains("msie")) {
-			return "ie";
+			return "IE";
 		} else if(agent.toLowerCase().contains("chrome")) {
 			return "chrome";
 		} else if(agent.toLowerCase().contains("safari")) {

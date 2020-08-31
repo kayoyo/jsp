@@ -1,6 +1,8 @@
 package com.koreait.pjt.user;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +24,7 @@ public class LikeSer extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		int i_board = Integer.parseInt(request.getParameter("i_board"));
-		int likey = Integer.parseInt(request.getParameter("likey"));
+		int like = Integer.parseInt(request.getParameter("like"));
 		
 		HttpSession hs = request.getSession();
 		UserVO loginUser = (UserVO) hs.getAttribute(Const.LOGIN_USER);
@@ -31,16 +33,16 @@ public class LikeSer extends HttpServlet {
 		
 		param.setI_user(loginUser.getI_user()); //로그인한 사람의 i_user(세션에 담겨져 있음)
 		param.setI_board(i_board);
-		param.setLikey(likey);
+		param.setLike(like);
 		
 		
 		
-		if(likey == 0) {
-			BoardDAO.likey(param);
+		if(like == 0) {
+			BoardDAO.like(param);
 			response.sendRedirect("/board/detail?i_board=" + i_board);
 			
 		} else {
-			BoardDAO.unlikey(param);
+			BoardDAO.unlike(param);
 			response.sendRedirect("/board/detail?i_board=" + i_board);
 			
 		}
@@ -54,6 +56,8 @@ public class LikeSer extends HttpServlet {
 		
 		
 	}
+		
+	
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

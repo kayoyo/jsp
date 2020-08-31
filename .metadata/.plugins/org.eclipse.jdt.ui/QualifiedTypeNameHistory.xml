@@ -9,13 +9,10 @@
 <fullyQualifiedTypeName name="com.koreait.board.vo.BoardVO"/>
 <fullyQualifiedTypeName name="java.security.MessageDigest"/>
 <fullyQualifiedTypeName name="java.security.NoSuchAlgorithmException"/>
-<fullyQualifiedTypeName name="com.koreait.pjt.db.UserDAO"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="com.koreait.pjt.ViewResolver"/>
 <fullyQualifiedTypeName name="java.io.IOException"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.Const"/>
 <fullyQualifiedTypeName name="javax.servlet.ServletContext"/>
-<fullyQualifiedTypeName name="com.koreait.pjt.vo.UserVO"/>
 <fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.vo.LoginHistroryVO"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardDAO"/>
@@ -32,5 +29,8 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardCmtDAO"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardDomain"/>
+<fullyQualifiedTypeName name="com.koreait.pjt.ViewResolver"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.MyUtils"/>
+<fullyQualifiedTypeName name="com.koreait.pjt.db.UserDAO"/>
+<fullyQualifiedTypeName name="com.koreait.pjt.vo.UserVO"/>
 </qualifiedTypeNameHistroy>

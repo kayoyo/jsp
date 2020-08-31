@@ -30,29 +30,43 @@ public class BoardListSer extends HttpServlet {
 			return;
 		}
 		
+		String searchText = request.getParameter("searchText");
+		searchText = (searchText == null) ? "" : searchText;
+		
 		int page = MyUtils.getIntParameter(request, "page");
 		//페이지 쿼리 스트링을 보내지 않았을 때, 숫자이외에 문자가 섞여 있을때(MyUtils.getIntParamete), 0이 출력됨
 		page = (page == 0 ? 1 : page);
 		
-		request.setAttribute("nowPage", page); //현재 페이지를 nowPage에 넣어줌
+		int recordCnt = MyUtils.getIntParameter(request, "record_cnt");
+		recordCnt = (recordCnt == 0 ? 10 : recordCnt);
 		
-		int eIdx = page * Const.RECORD_CNT;
-		int sIdx = eIdx - Const.RECORD_CNT;
 		
 		BoardDomain param = new BoardDomain();
+		param.setRecord_cnt(recordCnt);
+		param.setSearchText("%" + searchText + "%");
+		
+		int pagingCnt = BoardDAO.selPagingCnt(param);
+		
+		if(page > pagingCnt) {
+			page = pagingCnt;
+		}
+		
+		request.setAttribute("nowPage", page); //현재 페이지를 nowPage에 넣어줌
+		request.setAttribute("paginCnt", pagingCnt);
+		
+		int eIdx = page * recordCnt;
+		int sIdx = eIdx - recordCnt;
 		
 		param.seteIdx(eIdx);
 		param.setsIdx(sIdx);
-		param.setRecord_cnt(Const.RECORD_CNT);
 		
 		List<BoardVO> list = BoardDAO.selBoardList(param);
 		request.setAttribute("list", list);
 		
-		request.setAttribute("name", "loginUser");
-		request.setAttribute("paginCnt", BoardDAO.selPagingCnt(param));
-		
+		request.setAttribute("data", "loginUser");
 		ViewResolver.forwordLoginChk("board/list", request, response);
 				
 	}	
+	
 	
 }

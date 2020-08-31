@@ -5,9 +5,18 @@ import com.koreait.pjt.vo.BoardVO;
 public class BoardDomain extends BoardVO {
 	
 		private String nm;
-		private int record_cnt; //페이지당 나오는 레코드 수
+		private int record_cnt; //페이지당 나오는 레코드 수(게시글 수)
 		private int eIdx;
 		private int sIdx;
+		private String searchText;
+
+		public String getSearchText() {
+			return searchText;
+		}
+
+		public void setSearchText(String searchText) {
+			this.searchText = searchText;
+		}
 
 		public int geteIdx() {
 			return eIdx;

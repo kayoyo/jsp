@@ -79,6 +79,71 @@ public class UserDAO {
 			});
 					
 		}
+		public static UserVO selUser(int i_user) {
+			String sql = " select user_id, user_nm, profile_img, e_mail, r_dt from t_user where i_user = ? ";
+			
+			UserVO result = new UserVO();
+			
+			JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+
+				@Override
+				public void prepared(PreparedStatement ps) throws SQLException {
+					ps.setInt(1, i_user);
+					
+				}
+
+				@Override
+				public int executeQuery(ResultSet rs) throws SQLException {
+					if(rs.next()) {
+						result.setUser_id(rs.getNString("user_id"));
+						result.setUser_name(rs.getNString("user_nm"));
+						result.setProfile_img(rs.getNString("profile_img"));
+						result.setUser_email(rs.getNString("e_mail"));
+						result.setR_dt(rs.getNString("r_dt"));
+					}
+					return 1;
+				}
+				
+			});
+			return result;
+			
+		}
 		
+		public static int upUser(UserVO param) {
+			StringBuilder sb = new StringBuilder(" update t_user set m_dt = sysdate ");
+			
+			if(param.getUser_pw() != null) {
+				sb.append(" ,  user_pw = '");
+				sb.append(param.getUser_pw());
+				sb.append("' ");
+			}			
+			if(param.getUser_name() != null) {
+				sb.append(" ,  user_nm = '");
+				sb.append(param.getUser_name());
+				sb.append("' ");
+			}
+			if(param.getUser_email() != null) {
+				sb.append(" ,  e_mail = '");
+				sb.append(param.getUser_email());
+				sb.append("' ");
+			}
+			if(param.getProfile_img() != null) {
+				sb.append(" ,  profile_img = '");
+				sb.append(param.getProfile_img());
+				sb.append("' ");
+			}
+			sb.append(" where i_user = ");
+			sb.append(param.getI_user());
+			
+			return JdbcTemplate.excuteUpdate(sb.toString(), new JdbcUpdateInterface() {
+
+				@Override
+				public void update(PreparedStatement ps) throws SQLException {
+					
+				}
+				
+			});
+			
+		}
 		
 }

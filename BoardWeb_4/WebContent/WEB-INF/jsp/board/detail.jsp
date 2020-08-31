@@ -18,7 +18,7 @@
 <body>
 <div>
 <!-- 삭제 버튼을 누르면 post방식으로 action의 주소로 날라감 -->
-	<a href="/board/list"><button>리스트</button></a>
+	<a href="/board/list?page=${param.page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}"><button>리스트</button></a>
 	<c:if test = "${loginUser.i_user == data.i_user}">
 		<a href="/board/regmod?i_board=${data.i_board}"><button>수정</button></a>
 		<form id="delFrm" action="/board/del" method="post">
@@ -34,10 +34,10 @@
 <div>작성자 : ${data.user_nm}</div>
 <div>조회수 : ${data.hits}</div>
 <div>작성일자 : ${data.r_dt}</div>	
-<div onclick="like(${data.likey})"> 
-			 <c:if test = "${data.likey == 0}">
+<div onclick="like(${data.like})"> 
+			 <c:if test = "${data.like == 0}">
              <span class="material-icons">thumb_up_alt : 좋아요</span></c:if>
-			 <c:if test = "${data.likey == 1}">
+			 <c:if test = "${data.like == 1}">
 			 <span class="material-icons">thumb_down_alt : 싫어요</span></c:if>
 </div>
 <div> 공감 : ${data.like_cnt}</div>
@@ -103,8 +103,8 @@
 			}
 		}
 		
-		function like(likey) {		
-			location.href= '/like?i_board=${data.i_board}&likey=${data.likey}';	
+		function like() {		
+			location.href= '/like?i_board=${data.i_board}&like=${data.like}';	
 		}
 	</script>
 </body>

@@ -1,7 +1,7 @@
 package com.koreait.pjt.vo;
 
 public class BoardVO {
-	
+
 	private int i_board;
 	private String title;
 	private String ctnt;
@@ -10,27 +10,9 @@ public class BoardVO {
 	private String r_dt;
 	private String m_dt;
 	private String user_nm;
-	private int likey;
+	private int like;
 	private int like_cnt;
 	
-	public int getLike_cnt() {
-		return like_cnt;
-	}
-	public void setLike_cnt(int like_cnt) {
-		this.like_cnt = like_cnt;
-	}
-	public int getLikey() {
-		return likey;
-	}
-	public void setLikey(int likey) {
-		this.likey = likey;
-	}
-	public String getUser_nm() {
-		return user_nm;
-	}
-	public void setUser_nm(String user_nm) {
-		this.user_nm = user_nm;
-	}
 	public int getI_board() {
 		return i_board;
 	}
@@ -73,5 +55,22 @@ public class BoardVO {
 	public void setM_dt(String m_dt) {
 		this.m_dt = m_dt;
 	}
-
+	public String getUser_nm() {
+		return user_nm;
+	}
+	public void setUser_nm(String user_nm) {
+		this.user_nm = user_nm;
+	}
+	public int getLike() {
+		return like;
+	}
+	public void setLike(int like) {
+		this.like = like;
+	}
+	public int getLike_cnt() {
+		return like_cnt;
+	}
+	public void setLike_cnt(int like_cnt) {
+		this.like_cnt = like_cnt;
+	}
 }

@@ -25,7 +25,7 @@ a {
 }
 
 .container {
-	width: 500px;
+	width: 1000px;
 	margin: 0 auto;
 }
 
@@ -51,30 +51,31 @@ a {
 </style>
 
 <title>리스트</title>
+
 </head>
 <body>
 	<div class="container">
 
 		<div class="user_name">
 		<span>${loginUser.user_name}</span> 님 환영합니다! 
+		<a href="/profile">프로필</a>
 			<a href="/logout"><button class="logOutBtn">로그아웃</button></a>
 		</div>
 		<div class="user_write">
 			<a href="/board/regmod"><button class="writeBtn">글쓰기</button></a>
 		</div>
 		<div>
-		레코드수 : ${param.page == null ? 1 : param.page}
 		<form id="selFrm" action="/board/list" method="get">
-		<input type="hidden" name="page" value="${param.page == null ? 1 : param.page}">
-		  
+		<input type="hidden" name="page" value="1">
+		레코드수 :
 		<select name="record_cnt" onchange="changeRecord()">
-			<c:forEach begin="10" end="30" step="10" var="item">
+			<c:forEach begin="10" end="30" step="10" var="reItem">
 				<c:choose>
-					<c:when test="${param.record_cnt == item || (param.record_cnt == null && item == 10)}">
-						<option value="${item}">${item}개</option>
+					<c:when test="${recordCnt == reItem}">
+						<option value="${reItem}" selected>${reItem}개</option>
 					</c:when>
 					<c:otherwise>
-						<option value="${item}">${item}개</option>	
+						<option value="${reItem}">${reItem}개</option>	
 					</c:otherwise>
 				</c:choose>
 			</c:forEach>
@@ -91,25 +92,32 @@ a {
 				<th>작성자</th>
 				<th>작성날짜</th>
 			</tr>
-			<c:forEach items="${list}" var="item"><!--forEach items는 리스트 형태-->
-				<tr onclick="moveToDetail(${item.i_board})">
-					<td>${item.i_board}</td>
-					<td>${item.title}</td>
-					<td>${item.hits}</td>
-					<td>${item.like_cnt}</td>
-					<td>${item.i_user}</td>
-					<td>${item.r_dt}</td>
+			<c:forEach items="${list}" var="liItem"><!--forEach items는 리스트 형태-->
+				<tr onclick="moveToDetail(${liItem.i_board})">
+					<td>${liItem.i_board}</td>
+					<td>${liItem.title}</td>
+					<td>${liItem.hits}</td>
+					<td>${liItem.like_cnt}</td>
+					<td>${liItem.i_user}</td>
+					<td>${liItem.r_dt}</td>
 				</tr>
 			</c:forEach>
 		</table>
+		<div class="search">
+			<form action="/board/list">
+				<input type="search" name="searchText" value="${param.searchText}">
+				<input type="submit" value="검색">
+				<input type="hidden" name="record_cnt" value="${recordCnt}">				
+			</form>
+		</div>
 		<div class="pageCnt">
-			<c:forEach var="i" begin="1" end="${paginCnt}">
+			<c:forEach var="pageItem" begin="1" end="${pagingCnt}">
 				<c:choose>
-					<c:when test="${i == nowPage}">
-						<span class="nowP">${i}</span>
+					<c:when test="${pageItem == nowPage}">
+						<span class="nowP">${pageItem}</span>
 					</c:when>
 					<c:otherwise>
-						<span><a href="/board/list?page=${i}">${i}</a></span>
+						<span><a href="/board/list?page=${pageItem}&record_cnt=${recordCnt}&searchText=${param.searchText}">${pageItem}</a></span>
 					</c:otherwise>
 				</c:choose>
 			</c:forEach>
@@ -117,7 +125,8 @@ a {
 	</div>
 	<script>
 	function moveToDetail(i_board){
-		location.href = '/board/detail?i_board=' + i_board
+		location.href = '/board/detail?page=${page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}&i_board=' + i_board
+						
 	}
 	function changeRecord(){
 		selFrm.submit()
