@@ -17,6 +17,9 @@
 	<div class="container">
 	<h1>MY PAGE</h1>
 	<div class="profile">
+	<div class="pwBtn">
+	<a href="/changePW"><button>비밀번호 변경</button></a>
+	</div>
 	<c:choose>
 		<c:when test="${data.profile_img != null}">
 			<img src="/img/user/${loginUser.i_user}/${data.profile_img}" width="200px" height="200px">
@@ -40,5 +43,13 @@
 	<div>DATE : ${data.r_dt}</div>
 	</div>
 	</div>
+	<script>
+		var proc = '${param.proc}'
+		switch(proc) {
+		case '1':
+			alert('비밀번호를 변경하였습니다.')
+			break
+		}
+	</script>
 </body>
 </html>

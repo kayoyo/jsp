@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import com.koreait.pjt.db.BoardCmtDAO;
 import com.koreait.pjt.db.BoardDAO;
+import com.koreait.pjt.db.BoardDomain;
 import com.koreait.pjt.vo.BoardCmtVO;
 import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
@@ -41,11 +42,21 @@ public class BoardDetailSer extends HttpServlet {
 			response.sendRedirect("/board/list");
 			return;
 		}
-	
-		BoardVO param = new BoardVO();
-		param.setI_board(i_board);
-		param.setI_user(loginUser.getI_user());
 		
+	
+		BoardDomain  param = new BoardDomain ();
+		param.setI_user(loginUser.getI_user());
+		param.setI_board(i_board);
+		
+		BoardVO detailBoard = BoardDAO.detailBoard(param);
+		
+		
+		request.setAttribute("data", detailBoard);
+		
+		request.setAttribute("cmtList", BoardCmtDAO.selCmtList(i_board));
+		
+		request.setAttribute("likeList", BoardCmtDAO.selCmtList_Like(param));
+
 		//단독으로 조회수 올리기 방지! -- [start] 
 		ServletContext application = getServletContext(); //어플리케이션 내장객체 얻어오기
 		Integer readI_user = (Integer) application.getAttribute("read_" + strI_board);
@@ -60,10 +71,6 @@ public class BoardDetailSer extends HttpServlet {
 		}
 		//단독으로 조회수 올리기 방지! -- [end]
 		
-		request.setAttribute("cmtList", BoardCmtDAO.selCmtList(i_board));
-		
-		BoardVO data = BoardDAO.detailBoard(param);
-		request.setAttribute("data", data);
 		
 		ViewResolver.forword("board/detail", request, response);
 		

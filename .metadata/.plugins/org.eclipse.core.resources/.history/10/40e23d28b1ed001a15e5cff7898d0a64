@@ -1,0 +1,219 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>상세 페이지</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+<style>
+ a {text-decoration:none; color: black;}
+ 
+.material-icons {color: red;}
+
+.user_profile {
+		display: inline-block;	
+		width: 100px;
+		height: 100px;
+	    border-radius: 50%;
+	    overflow: hidden;
+	}
+	
+	.pImg {
+		 object-fit: cover;
+		  max-width:100%;
+	}
+	
+.user_profile2 {
+		display: inline-block;	
+		width: 50px;
+		height: 50px;
+	    border-radius: 50%;
+	    overflow: hidden;
+				}				
+.highlight {color: red;}
+
+#likeListContainer {
+         	opacity: 0;
+			border: 1px solid #bdc3c7;
+			position: absolute;
+			left: 0px;
+			top: 30px;
+			width: 100px;
+			height: 200px;
+			overflow-y: auto;
+			background-color: white;
+			transition-duration : 500ms;
+        }
+#id_like {
+           position: relative;
+           font-size: 1em;
+        }
+        
+#id_like:hover #likeListContainer {
+           opacity: 1;;
+        }
+
+</style>
+</head>
+<body>
+<div>
+<!-- 삭제 버튼을 누르면 post방식으로 action의 주소로 날라감 -->
+	<a href="/board/list?page=${page}&record_cnt=${recordCnt}&searchText=${searchText}&searchType=${searchType}"><button>리스트</button></a>
+	<c:if test = "${loginUser.i_user == data.i_user}">
+		<a href="/board/regmod?i_board=${data.i_board}"><button>수정</button></a>
+		<form id="delFrm" action="/board/del" method="post">
+		<input type="hidden" name="i_board" value="${data.i_board}">
+		<a href="#" onclick="submitDel()"><button>삭제</button></a> 
+		</form>			
+	</c:if> 
+</div>
+<div>상세페이지</div>
+<div>글번호 : ${data.i_board}</div>
+<div id="elTitle">제목 : ${data.title}</div>
+<div id="elCtnt">내용 : ${data.ctnt}</div>
+<div class="user_name">작성자 : ${data.user_nm}</div>	
+<div class="user_profile">
+	<c:choose>
+	<c:when test="${data.profile_img != null}">
+	<img class="pImg" src="/img/user/${data.i_user}/${data.profile_img}">
+	</c:when>
+	<c:otherwise>
+	<img class="pImg" src="/img/default_profile.jpg">
+	</c:otherwise>
+	</c:choose>
+	</div>
+<div>조회수 : ${data.hits}</div>
+<div>작성일자 : ${data.r_dt}</div>	
+<div onclick="like(${data.like})"> 
+			 <c:if test = "${data.like == 0}">
+             <span class="material-icons">thumb_up_alt</span></c:if>
+			 <c:if test = "${data.like == 1}">
+			 <span class="material-icons">thumb_up_alt</span></c:if>
+</div>
+<div>
+	<c:if test = "${data.like_cnt > 0}">
+		<div id ="id_like">
+			<span class="pointCursor">좋아요 ${data.like_cnt}개</span>
+		<div id="likeListContainer">
+			<span class="cmtNm">${likeList.user_nm}</span>
+			<span class="pic">${likeList.profile_img}</span>
+		</div>
+		</div>
+	</c:if>
+</div>
+<div><form id="cmtFrm" action="/board/cmt" method="post">
+	<input type="hidden" name="i_cmt" value="0" class="i_cmtNum"> <!-- 서버로 값을 보냄 0 또는 1(스위치 구문 처리) --> 
+	<input type="hidden" name="i_board" value="${data.i_board}">
+	<div>
+	<input type="text" name="cmt" placeholder="댓글내용" class="cmtBox"> <!-- 수정할 값을 댓글창에 띄우는 용도-->
+	<input type="submit" value="등록" id="cmtSubmit">
+	<input type="button" value="취소" onclick="cmtCancel()">
+	</div>
+	</form>
+</div>
+<div>댓글 리스트</div>
+<table>
+<tr>
+<th>No</th>
+<th>내용</th>
+<th>글쓴이</th>
+<th>프로필</th>
+<th>등록날짜</th>
+<th>비고</th>
+</tr>
+<c:forEach items="${cmtList}" var="cmtItem">
+<tr>
+<td>${cmtItem.i_cmt}</td>
+<td>${cmtItem.cmt}</td>
+<td>${cmtItem.user_nm}</td>
+<td>
+<div class="user_profile2">
+	<c:choose>
+	<c:when test="${cmtItem.profile_img != null}">
+	<img class="pImg" src="/img/user/${cmtItem.i_user}/${cmtItem.profile_img}">
+	</c:when>
+	<c:otherwise>
+	<img class="pImg" src="/img/default_profile.jpg">
+	</c:otherwise>
+	</c:choose>
+	</div>
+</td>
+<td>${cmtItem.r_dt}</td>
+<td>
+<c:if test = "${loginUser.i_user == cmtItem.i_user}">
+	<button onclick="delBtn(${cmtItem.i_cmt})" >삭제</button>
+	<button onclick="upBtn(${cmtItem.i_cmt}, '${cmtItem.cmt}')">수정</button>
+</c:if> 
+</td>
+</tr>
+</c:forEach>
+</table>
+<script>
+		function submitDel() {
+			if(confirm('삭제하시겠습니까?')){
+				delFrm.submit()
+				
+			}
+		}
+		
+		function upBtn(i_cmt, cmt){
+			//console.log('i_cmt: ' + i_cmt)
+			cmtFrm.i_cmt.value = i_cmt
+			cmtFrm.cmt.value = cmt
+			cmtSubmit.value = '수정'
+			
+		}
+		
+		function cmtCancel() {
+			cmtFrm.i_cmt.value = 0
+			cmtFrm.cmt.value = ''
+			cmtSubmit.value = '등록'		
+		} 
+		
+		function delBtn(i_cmt) {
+			if(confirm('삭제하시겠습니까?')){
+				location.href= '/board/cmt?i_cmt=${item.i_cmt}&i_board=${data.i_board}' + i_cmt 
+			}
+		}
+		
+		function like(like) {		
+			location.href= '/like?page=${param.page}&record_cnt=${param.record_cnt}&searchType=${param.searchType}&searchText=${param.searchText}&i_board=${data.i_board}&like=' + like
+		}
+		
+		 function doHighlight() {
+	        	var searchText = '${param.searchText}'
+	        	var searchType = '${param.searchType}'
+	        	
+	        	switch(searchType) {
+	        	case 'a': //제목
+	        		var txt = elTitle.innerText
+	        		txt = txt.replace(new RegExp('${param.searchText}', gi), '<span class="highlight">' + searchText + '</span>')
+	        		elTitle.innerHTML = txt
+	        		break
+	        		
+	        	case 'b': //내용
+	        		var txt = elCtnt.innerText
+	        		txt = txt.replace(new RegExp('${param.searchText}', gi), '<span class="highlight">' + searchText + '</span>')
+	        		elCtnt.innerHTML = txt
+	        		break
+	        		
+	        	case 'c': //제목+내용
+	        		var txt = elTitle.innerText
+	        		txt = txt.replace(new RegExp('${param.searchText}', gi), '<span class="highlight">' + searchText + '</span>')
+	        		elTitle.innerHTML = txt
+	        		
+	        		txt = elCtnt.innerText
+	        		txt = txt.replace(new RegExp('${param.searchText}', gi), '<span class="highlight">' + searchText + '</span>')
+	        		elCtnt.innerHTML = txt
+	        		break
+	        	}
+	        }
+	        
+	        doHighlight()
+	</script>
+</body>
+</html>

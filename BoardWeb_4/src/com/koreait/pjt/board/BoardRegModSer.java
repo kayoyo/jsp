@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import com.koreait.pjt.Const;
 import com.koreait.pjt.ViewResolver;
 import com.koreait.pjt.db.BoardDAO;
+import com.koreait.pjt.db.BoardDomain;
 import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
 
@@ -37,10 +38,10 @@ public class BoardRegModSer extends HttpServlet {
 		if(strI_board != null) { //수정창
 			int i_board = Integer.parseInt(strI_board); 
 			
-			BoardVO param = new BoardVO();
+			BoardDomain param = new BoardDomain();
 			param.setI_board(i_board);
 			
-			BoardVO data = BoardDAO.detailBoard(param);
+			BoardDomain data = (BoardDomain)BoardDAO.detailBoard(param);
 			request.setAttribute("data", data);
 		}
 		
@@ -55,6 +56,9 @@ public class BoardRegModSer extends HttpServlet {
 			String ctnt = request.getParameter("ctnt");
 			String stri_board = request.getParameter("i_board");
 			
+			String filterCtnt1 = scriptFilter(ctnt);
+			String filterCtnt2 = swearWordFilter(filterCtnt1);
+			
 			HttpSession hs = request.getSession();
 			UserVO loginUser = (UserVO) hs.getAttribute(Const.LOGIN_USER);
 				
@@ -62,6 +66,7 @@ public class BoardRegModSer extends HttpServlet {
 			
 			param.setTitle(title);
 			param.setCtnt(ctnt);
+			param.setCtnt(filterCtnt2);
 			param.setI_user(loginUser.getI_user());
 			
 			int result = 0;
@@ -69,10 +74,35 @@ public class BoardRegModSer extends HttpServlet {
 			if(stri_board != "") { //수정
 				param.setI_board(Integer.parseInt(stri_board));
 				result = BoardDAO.upBoard(param);
+				response.sendRedirect("/board/detail?i_board=" + stri_board);
+				
 			} else { //등록
 				result = BoardDAO.insBoard(param);
+				response.sendRedirect("/board/list");
 			}
-			
-			response.sendRedirect("/board/list");
 	}
-}
+			
+			//비속어 필터
+			private String swearWordFilter(final String ctnt) {
+				String[] filters = {"개새끼", "미친년", "ㄱ ㅐ ㅅ ㅐ ㄲ ㅣ"};
+				String result = ctnt;
+				for(int i=0; i<filters.length; i++) {
+					result = result.replace(filters[i], "***");
+				}
+				return result;
+			}
+
+			//스크립트 필터
+			private String scriptFilter(final String ctnt) {
+				String[] filters = {"<script>", "</script>"};
+				String[] filterReplaces = {"&lt;script&gt;", "&lt;/script&gt;"};
+
+				String result = ctnt;
+				for(int i=0; i<filters.length; i++) {
+					result = result.replace(filters[i], filterReplaces[i]);
+				}
+				return result;
+		
+		}
+	}
+

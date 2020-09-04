@@ -1,7 +1,6 @@
 package com.koreait.pjt.user;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.koreait.pjt.Const;
+import com.koreait.pjt.MyUtils;
 import com.koreait.pjt.db.BoardDAO;
 import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
@@ -23,36 +23,38 @@ public class LikeSer extends HttpServlet {
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		String strI_board = request.getParameter("i_board");
+		String strLike = request.getParameter("like");
+		String page = request.getParameter("page");
+		String record_cnt = request.getParameter("record_cnt");
+		String searchText = request.getParameter("searchText");
+		String searchType = request.getParameter("searchType");
+		
+		UserVO loginUser = MyUtils.getLoginUser(request);
+		
 		int i_board = Integer.parseInt(request.getParameter("i_board"));
 		int like = Integer.parseInt(request.getParameter("like"));
 		
-		HttpSession hs = request.getSession();
-		UserVO loginUser = (UserVO) hs.getAttribute(Const.LOGIN_USER);
-		
 		BoardVO param = new BoardVO();
 		
-		param.setI_user(loginUser.getI_user()); //로그인한 사람의 i_user(세션에 담겨져 있음)
 		param.setI_board(i_board);
-		param.setLike(like);
+		param.setI_user(loginUser.getI_user()); //로그인한 사람의 i_user(세션에 담겨져 있음)
 		
-		
-		
+
 		if(like == 0) {
 			BoardDAO.like(param);
-			response.sendRedirect("/board/detail?i_board=" + i_board);
 			
-		} else {
+		} else if(like == 1) {
 			BoardDAO.unlike(param);
-			response.sendRedirect("/board/detail?i_board=" + i_board);
 			
 		}
 		
+		String target = String.format("/board/detail?i_board=%s&page=%s&record_cnt=%s&searchText=%s&searchType=%s"
+				, strI_board, page, record_cnt, searchText, searchType);
+		response.sendRedirect(target);
 		
 		
-		
-	    
-		
-		
+
 		
 		
 	}

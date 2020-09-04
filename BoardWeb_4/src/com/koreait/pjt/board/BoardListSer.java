@@ -16,6 +16,7 @@ import com.koreait.pjt.ViewResolver;
 import com.koreait.pjt.db.BoardDAO;
 import com.koreait.pjt.db.BoardDomain;
 import com.koreait.pjt.vo.BoardVO;
+import com.koreait.pjt.vo.UserVO;
 
 
 @WebServlet("/board/list")
@@ -24,11 +25,16 @@ public class BoardListSer extends HttpServlet {
        
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession hs = request.getSession();
-		if(hs.getAttribute(Const.LOGIN_USER) == null) {
+		
+		UserVO loginUser = MyUtils.getLoginUser(request); //ID, PK, NAME
+		
+		if( loginUser == null) {
 			response.sendRedirect("/login");
 			return;
 		}
+		
+		String searchType = request.getParameter("searchType");
+		searchType = (searchType == null) ? "a" : searchType;
 		
 		String searchText = request.getParameter("searchText");
 		searchText = (searchText == null) ? "" : searchText;
@@ -42,17 +48,24 @@ public class BoardListSer extends HttpServlet {
 		
 		
 		BoardDomain param = new BoardDomain();
+		param.setI_user(loginUser.getI_user());
 		param.setRecord_cnt(recordCnt);
+		param.setSearchType(searchType);
 		param.setSearchText("%" + searchText + "%");
 		
 		int pagingCnt = BoardDAO.selPagingCnt(param);
 		
-		if(page > pagingCnt) {
+		//System.out.println(" pagingCnt : "  + pagingCnt);
+		//System.out.println("page : " + page);
+		
+		if(page > pagingCnt) { //이전 레코드수 값이 있고, 이전 레코드 수보다 변경한 수가 더 크다면
 			page = pagingCnt;
 		}
 		
-		request.setAttribute("nowPage", page); //현재 페이지를 nowPage에 넣어줌
-		request.setAttribute("paginCnt", pagingCnt);
+		request.setAttribute("searchType", searchType);
+		request.setAttribute("searchText", searchText);
+		request.setAttribute("page", page); //현재 페이지를 page에 넣어줌
+		request.setAttribute("pagingCnt", pagingCnt);
 		
 		int eIdx = page * recordCnt;
 		int sIdx = eIdx - recordCnt;
@@ -60,13 +73,32 @@ public class BoardListSer extends HttpServlet {
 		param.seteIdx(eIdx);
 		param.setsIdx(sIdx);
 		
-		List<BoardVO> list = BoardDAO.selBoardList(param);
-		request.setAttribute("list", list);
+		List<BoardDomain> list = BoardDAO.selBoardList(param);
 		
+		//하이라이트 처리
+		if(!"".equals(searchText) && ("a".equals(searchType) || "c".equals(searchType))) { //b는 내용
+			for(BoardDomain item : list) {
+				String title = item.getTitle();
+				title = title.replace(searchText, "<span class=\"highlight\">" + searchText +"</span>");
+				item.setTitle(title);
+		}
+		}
+			
+		request.setAttribute("list", list);
 		request.setAttribute("data", "loginUser");
+//		request.setAttribute("data", list);
+		
+		HttpSession hs = request.getSession();
+		
+		hs.setAttribute("page", page);
+		hs.setAttribute("recordCnt", recordCnt);
+		hs.setAttribute("searchType", searchType);
+		hs.setAttribute("searchText", searchText);
+		
+		
+		
 		ViewResolver.forwordLoginChk("board/list", request, response);
-				
 	}	
 	
-	
-}
+	}	
+

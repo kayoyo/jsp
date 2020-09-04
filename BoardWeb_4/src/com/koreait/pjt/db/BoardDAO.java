@@ -9,28 +9,66 @@ import java.util.List;
 import com.koreait.pjt.vo.BoardVO;
 
 public class BoardDAO {
-	public static List<BoardVO> selBoardList(BoardDomain param){
-		final List<BoardVO> list = new ArrayList(); //객체의 주소값을 변경할 수 없다. 값을 추가 할 수는 있다.
+	public static List<BoardDomain> selBoardList(BoardDomain param){
+		final List<BoardDomain> list = new ArrayList(); //객체의 주소값을 변경할 수 없다. 값을 추가 할 수는 있다.
 		
-		String sql = " select A.* from "		
-				+ " ( select rownum as rnum, A.* from "
-				+ " ( select i_board, title, hits, i_user, r_dt "
-				+ " , (SELECT count(*) FROM t_board4_like where i_board = A.i_board) as like_cnt "
-				+ " from t_board4 A where title like ? order by i_board desc ) A "
-				+ " where rownum <= ? ) A "
-				+ " where A.rnum > ? ";
+		/*String sql =  " SELECT A.* FROM ( "
+				 + " SELECT ROWNUM as RNUM, A.* FROM ( "
+				 + " SELECT A.i_board, A.title, A.hits, A.i_user, A.r_dt, B.user_nm, B.profile_img "
+				 + " FROM t_board4 A INNER JOIN t_user B ON A.i_user = B.i_user "
+				 + " WHERE A.title LIKE ? "
+				 + " ORDER BY i_board DESC "
+				 + " ) A WHERE ROWNUM <= ? "
+				 + " ) A WHERE A.RNUM > ? ";*/
+		String sql = " SELECT a.* FROM "
+				   + "( SELECT ROWNUM AS rnum, a.* FROM "
+				   + "( SELECT a.i_board, "
+				   + " a.title, a.hits, a.i_user, a.r_dt, "
+				   + " b.user_nm, b.profile_img, "
+				   + " c.like_cnt, c.count_cmt, c.you_like FROM t_board4 a "
+				   + " INNER JOIN t_user b ON a.i_user = b.i_user "
+				   + " left join "
+				   + " ( SELECT a.i_board,  a.title, nvl(b.cnt, 0) AS like_cnt,  nvl(c.cmt_select, 0) AS count_cmt, decode(d.i_board, NULL, 0, 1) AS you_like FROM t_board4 a "
+				   + " LEFT JOIN "
+				   + " ( SELECT i_board, COUNT(i_board) AS cnt FROM t_board4_like  GROUP BY  i_board )b ON a.i_board = b.i_board "
+				   + " LEFT JOIN "
+				   + " ( SELECT i_board, COUNT(i_board) AS cmt_select FROM t_board_cmt "
+				   + " GROUP BY i_board ) c ON a.i_board = c.i_board "
+				   + " LEFT JOIN "
+				   + " ( SELECT i_board  FROM t_board4_like "
+				   + " WHERE i_user = ? ) d ON a.i_board = d.i_board)C on a.i_board = C.i_board "
+				   + " WHERE ";
+					switch(param.getSearchType()) {
+					case "a" : 
+						sql += "a.title like ? ";
+						break;
+					case "b" : 
+						sql += "a.ctnt like ? ";
+						break;
+					case "c" : 
+						sql += "( a.ctnt like ? or a.title like ? ) ";
+						break;
+					}
+				   sql += " ORDER BY i_board DESC "
+				   		+ " ) a WHERE rownum <= ? "
+				   		+ ") a WHERE a.rnum > ? ";
+			        
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 		
 
 			@Override
 			public void prepared(PreparedStatement ps) throws SQLException {
+				int seq = 1;
+				ps.setInt(seq, param.getI_user()); //로그인 한 사람의 i_user
+				ps.setNString(++seq, param.getSearchText());//2
 				
-				ps.setNString(1, param.getSearchText());
-				ps.setInt(2, param.geteIdx()); //~까지
-				ps.setInt(3, param.getsIdx()); //~부터
+				if(param.getSearchType().equals("c")) {
+					ps.setNString(++seq, param.getSearchText()); //3
+				}
+				ps.setInt(++seq, param.geteIdx()); //~까지 4
+				ps.setInt(++seq, param.getsIdx()); //~부터 5
 			}
-			//eidx = p * r
-			//sidx = eidx - r 
+			
 			
 			@Override
 			public int executeQuery(ResultSet rs) throws SQLException {
@@ -41,15 +79,25 @@ public class BoardDAO {
 					int hits = rs.getInt("hits");
 					int i_user = rs.getInt("i_user");
 					String r_dt = rs.getNString("r_dt");
+					String profile_img = rs.getNString("profile_img");
+					String user_name = rs.getNString("user_nm");
 					int like_cnt = rs.getInt("like_cnt");
+					int count_cmt = rs.getInt("count_cmt");
+					int you_like = rs.getInt("you_like");
 					
-					BoardVO vo = new BoardVO();
+					
+					
+					BoardDomain vo = new BoardDomain();
 					vo.setI_board(i_board);
 					vo.setTitle(title);
 					vo.setHits(hits);
 					vo.setI_user(i_user);
 					vo.setR_dt(r_dt);
+					vo.setUser_nm(user_name);
+					vo.setProfile_img(profile_img);
 					vo.setLike_cnt(like_cnt);
+					vo.setCount_cmt(count_cmt);
+					vo.setYou_like(you_like);
 					
 					list.add(vo);
 				}			
@@ -77,61 +125,71 @@ public class BoardDAO {
 		});
 		
 	}
-	public static BoardVO detailBoard(BoardVO param) {
+	public static BoardDomain detailBoard(BoardVO param) {
+			BoardDomain result = new BoardDomain();
+			result.setI_board(param.getI_board());
 		/*String sql = " SELECT A.i_board, A.title, A.ctnt, B.user_nm, A.i_user, A.r_dt, A.hits "
 				+ " FROM t_board4 A "
 				+ " inner join t_user B "
 				+ " on A.i_user = B.i_user "
 				+ " WHERE A.i_board = ? ";*/
 		
-		String sql = " select A.*, B.user_nm, decode(C.i_user, null, 0, 1) as like_ "
-				+ ", (SELECT count(*) FROM t_board4_like where i_board = ?) as like_cnt "
-				+ " from t_board4 A "
-				+ " inner join t_user B "
-				+ " on A.i_user = B.i_user "
-				+ " left join t_board4_like C "
-				+ " on A.i_board = C.i_board and c.i_user = ? where A.i_board = ? ";
+		String sql = " select A.*, B.user_nm, B.profile_img, decode(C.i_user, null, 0, 1) as like_ "
+					+ ", (SELECT count(*) FROM t_board4_like where i_board = ?) as like_cnt "
+					+ " from t_board4 A "
+					+ " inner join t_user B "
+					+ " on A.i_user = B.i_user "
+					+ " left join t_board4_like C "
+					+ " on A.i_board = C.i_board and c.i_user = ? where A.i_board = ? ";
 		//i_user : 로그인 한 사람, i_board : 선택된 게시글
 		//like가 예약어라서 실행안됨, 검색어 like가 작동함
+		
+//		String sql = " select B.profile_img, B.user_nm, A.i_user "
+//					+ " , A.title, A.ctnt, A.hits, to_char(A.r_dt, 'yyyy/mm/dd hh24:mi') as r_dt "
+//					+ " , decode(C.i_user, null, 0, 1 ) as you_like "
+//					+ " , nvl(D.cnt, 0) as like_cnt "
+//					+ " from t_board4 A "
+//					+ " inner join t_user B "
+//					+ " on A.i_user = B.i_user "
+//					+ " left join t_board4_like C "
+//					+ " on A.i_board = C.i_board "
+//					+ " and C.i_user = ? "
+//					+ " left join ( "
+//					+ " select i_board, count(i_board) as cnt from t_board4_like "
+//					+ " where i_board = ? "
+//					+ " group by i_board ) D "
+//					+ " on A.i_board = D.i_board "
+//					+ " where A.i_board = ? ";
 		
 		int resultInt = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
 			@Override
 			public void prepared(PreparedStatement ps) throws SQLException {
-				ps.setInt(1, param.getI_board());
-				ps.setInt(2, param.getI_user());
-				ps.setInt(3, param.getI_board());
+					ps.setInt(1, param.getI_board());
+					ps.setInt(2, param.getI_user());
+					ps.setInt(3, param.getI_board());
 				
 			}
 
 			@Override
 			public int executeQuery(ResultSet rs) throws SQLException {
 				if(rs.next()) {
-					int i_board = rs.getInt("i_board");
-					String title = rs.getNString("title");
-					String ctnt = rs.getNString("ctnt");
-					String user_nm = rs.getNString("user_nm");
-					String r_dt = rs.getNString("r_dt");
-					int hits = rs.getInt("hits");
-					int i_user = rs.getInt("i_user");
-					int like = rs.getInt("like_");
-					int like_cnt = rs.getInt("like_cnt");
-					
-					param.setI_user(i_board);
-					param.setTitle(title);
-					param.setCtnt(ctnt);
-					param.setUser_nm(user_nm);
-					param.setR_dt(r_dt);
-					param.setHits(hits);
-					param.setI_user(i_user); //작성자
-					param.setLike(like);
-					param.setLike_cnt(like_cnt);
+			
+					result.setTitle(rs.getNString("title"));
+					result.setCtnt(rs.getNString("ctnt"));
+					result.setUser_nm(rs.getNString("user_nm"));
+					result.setR_dt(rs.getNString("r_dt"));
+					result.setHits(rs.getInt("hits"));
+					result.setI_user(rs.getInt("i_user")); //작성자
+					result.setLike(rs.getInt("like_"));
+					result.setLike_cnt(rs.getInt("like_cnt"));
+					result.setProfile_img(rs.getNString("profile_img"));
 					
 					} 
 				return 1;				
 				}
 		});
-		return param;
+		return result;
 	}
 	
 		public static int delBoard(BoardVO param) {
@@ -223,13 +281,30 @@ public class BoardDAO {
 		
 		//페이지 숫자 가져오기
 		public static int selPagingCnt(final BoardDomain param) {
-			String sql = " select ceil(count(i_board) / ?) from t_board4 where title like ? "; //'%' || ? || '%'
+			String sql = " select ceil(count(i_board) / ?) from t_board4 where "; //'%' || ? || '%'
+			
+			switch(param.getSearchType()) {
+			case "a" : 
+				sql += " title like ? ";
+				break;
+			case "b" : 
+				sql += " ctnt like ? ";
+				break;
+			case "c" : 
+				sql += "( ctnt like ? or title like ? ) ";
+				break;
+			}
+			
 			return JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
 				@Override
 				public void prepared(PreparedStatement ps) throws SQLException {
 					ps.setInt(1, param.getRecord_cnt());
 					ps.setNString(2, param.getSearchText());
+					
+					if(param.getSearchType().equals("c")) {
+						ps.setNString(3, param.getSearchText());
+					}
 					
 				}
 

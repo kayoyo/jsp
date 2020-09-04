@@ -32,10 +32,10 @@ public class BoardCmtDAO {
 	public static List<BoardCmtVO> selCmtList(int i_board){
 		List<BoardCmtVO> list = new ArrayList();
 		
-		String sql = " select A.i_cmt, B.i_user, A.cmt, A.r_dt, B.user_nm "
+		String sql = " select A.i_cmt, B.i_user, A.cmt, A.r_dt, B.user_nm, B.profile_img "
 					+ " from t_board_cmt A "
 					+ " left join t_user B "
-				    + " on A.i_user = B.i_user where i_board=? "
+				    + " on A.i_user = B.i_user where i_board= ? "
 					+ " order by A.i_cmt " ;
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
@@ -55,6 +55,7 @@ public class BoardCmtDAO {
 					vo.setR_dt(rs.getNString("r_dt"));
 					vo.setUser_nm(rs.getNString("user_nm"));
 					vo.setI_user(rs.getInt("i_user"));
+					vo.setProfile_img(rs.getNString("profile_img"));
 					
 					list.add(vo);		
 				}
@@ -66,6 +67,48 @@ public class BoardCmtDAO {
 		return list;
 		
 	}
+	
+	public static List<BoardDomain> selCmtList_Like(BoardDomain param){
+		List<BoardDomain> list = new ArrayList();
+		
+		String sql = " select B.i_user, B.user_nm, B.profile_img from t_board4_like A "
+					+ " inner join t_user B "
+					+ " on A.i_user = B.i_user "
+					+ " where A.i_board = ? "
+					+ " order by A.r_dt asc ";		
+				
+		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, param.getI_board());
+				
+			}
+
+			@Override
+			public int executeQuery(ResultSet rs) throws SQLException {
+				
+				while(rs.next()) {
+					
+					BoardDomain param = new BoardDomain();
+					param.setI_user(rs.getInt("i_user"));
+					param.setNm(rs.getNString("user_nm"));
+					param.setProfile_img(rs.getNString("profile_img"));
+					
+					list.add(param);		
+				}
+				return 1;
+			}
+			
+		});
+		
+		return list;
+		
+	}
+	
+	
+	
+	
 	
 	public static int updCmt(BoardCmtVO param) {
 		

@@ -1,0 +1,21 @@
+package com.koreait.pjt.user.com.koreait.pjt.user;
+
+public class Snippet {
+	public static void main(String[] args) {
+		.containerPImg {
+				display: inline-block;	
+				width: 30px;
+				height: 30px;
+			    border-radius: 50%;
+			    overflow: hidden;
+			}
+			
+			.pImg {
+			
+				 object-fit: cover;
+				  max-width:100%;
+			}
+		</style>
+	}
+}
+
