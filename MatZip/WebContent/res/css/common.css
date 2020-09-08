@@ -33,3 +33,4 @@ form > div:last-child {
 	display: flex;
 	justify-content: center;
 }
+.msg {color : pink;}

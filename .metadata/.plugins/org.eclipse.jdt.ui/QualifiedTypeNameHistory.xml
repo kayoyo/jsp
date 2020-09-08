@@ -2,12 +2,10 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="javax.servlet.RequestDispatcher"/>
 <fullyQualifiedTypeName name="com.sun.corba.se.pept.transport.Connection"/>
-<fullyQualifiedTypeName name="java.sql.DriverManager"/>
 <fullyQualifiedTypeName name="com.koreait.board.db.Dbconn"/>
 <fullyQualifiedTypeName name="com.koreait.board.param.Utils"/>
 <fullyQualifiedTypeName name="com.koreait.board.db.BoardDAO"/>
 <fullyQualifiedTypeName name="com.koreait.board.vo.BoardVO"/>
-<fullyQualifiedTypeName name="java.security.MessageDigest"/>
 <fullyQualifiedTypeName name="java.security.NoSuchAlgorithmException"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.io.IOException"/>
@@ -16,7 +14,6 @@
 <fullyQualifiedTypeName name="com.koreait.pjt.vo.LoginHistroryVO"/>
 <fullyQualifiedTypeName name="java.sql.SQLException"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.JdbcTemplate"/>
-<fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="java.sql.ResultSet"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.Dbconn"/>
@@ -34,7 +31,6 @@
 <fullyQualifiedTypeName name="com.koreait.pjt.ViewResolver"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.UserDAO"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.vo.UserVO"/>
-<fullyQualifiedTypeName name="java.io.PrintWriter"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.MyUtils"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardDAO"/>
 <fullyQualifiedTypeName name="com.google.gson.Gson"/>
@@ -42,4 +38,17 @@
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardDomain"/>
 <fullyQualifiedTypeName name="com.koreait.pjt.db.BoardCmtDAO"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="org.apache.catalina.servlets.DefaultServlet"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.Const"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.Template"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.user.UserController"/>
+<fullyQualifiedTypeName name="java.sql.DriverManager"/>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="java.security.MessageDigest"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.SecurityUtils"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.db.JdbcTemplate"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.db.JdbcUpdateInterface"/>
+<fullyQualifiedTypeName name="com.koreait.matzip.vo.UserVO"/>
+<fullyQualifiedTypeName name="java.io.PrintWriter"/>
 </qualifiedTypeNameHistroy>
