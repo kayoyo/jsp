@@ -33,6 +33,13 @@ public class Container extends HttpServlet {
 	}
 	
 	private void proc (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+		String routerCheckResult = LoginCheckInterceptor.routerChk(request);
+		if(routerCheckResult != null) {
+			response.sendRedirect(routerCheckResult);
+			return;
+		}
+		
 		
 		String temp = mapper.nav(request); //템플릿 파일명이 담김
 		
@@ -55,7 +62,7 @@ public class Container extends HttpServlet {
 				PrintWriter out = response.getWriter();
 				
 				//System.out.println("value : " + value);
-				out.print(value);
+				out.print(value); //서블릿에서 응답(jsp 프린트)
 				return;
 		}
 	}

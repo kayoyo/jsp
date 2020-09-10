@@ -26,12 +26,12 @@
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 		<script>
 			function chkId(){
-				const user_id = frm.user_id.value
-				axios.get('/user/ajaxIdChk', { //then 실행안된다면, ajaxIdChk의 주소값을 가져오지 못함 
+				const user_id = frm.user_id.value //frm form 안의 name="user_id" 의 value값 
+				axios.get('/user/ajaxIdChk', { 
 					params: {
-						user_id
+						'user_id' : user_id //params : key값 >> 쿼리스트링으로 날려줌(http://localhost:8090/user/ajaxIdChk?user_id='')
 					}					
-				}).then(function(res){
+				}).then(function(res){ //then 실행안된다면, ajaxIdChk의 주소값을 가져오지 못함 
 					console.log(res)
 					if(res.data.result == 2) { //아이디 없음
 						idError.innerText = '사용할 수 있는 아이디입니다'	

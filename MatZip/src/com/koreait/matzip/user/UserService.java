@@ -35,6 +35,14 @@ public class UserService {
 			String encryptPw = SecurityUtils.getEncrypt(param.getUser_pw(), salt); //암호화된 비밀번호
 			
 			if(encryptPw.equals(dbResult.getUser_pw())) { //암호화된 비밀번호 = dB 비밀번호
+				//id와 pw는 service.login(param)에 들어가 있음
+				param.setUser_pw(null);
+				param.setI_user(dbResult.getI_user());
+				param.setNm(dbResult.getNm());
+				param.setProfile_img(dbResult.getProfile_img());
+				
+				param = dbResult;
+				
 				result = 1; //비밀번호가 같다(로그인 가능)
 			} else { //비밀번호가 다르다(아이디는 같다) 
 				result = 3; 
