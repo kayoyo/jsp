@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/res/css/common.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 <title>${title}</title>
 </head>
 <body>
@@ -26,8 +27,9 @@
 			<div class="headerLogOut"><a href="/user/logout">로그아웃</a></div>
 		</div>
 		<div class="headerRight">
-			<a href="/restaurant/reg">등록</a>
-			<a class="zzim" href="/user/favolate">찜</a>
+			<a class="area" href="/restaurant/restmap">지도</a>
+			<a class="reg" href="/restaurant/restReg">등록</a>
+			<a class="zzim" href="/user/restFavolate">찜</a>
 		</div>
 	</header>
 	<section>

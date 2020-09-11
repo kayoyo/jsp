@@ -1,7 +1,12 @@
 @charset "UTF-8";
 
+
 * { 
 	box-sizing: border-box; 
+}
+
+* {
+	font-family: 'Noto Sans KR', sans-serif;
 }
 html, body {
 	padding: 0;
@@ -52,16 +57,20 @@ a {text-decoration: none;}
 	
 }
 .headerRight > a {
-	color: #fffad4;
+	color: #fff;
 }
 
 .headerRight >.zzim{
 	margin-left: 30px;
 }
 
+.headerRight >.area{
+	margin-right: 30px;
+}
+
 header > .headerLeft > .headerNm {
 	margin-left : 10px;
-	color : #27233;
+	color : #27233d;
 }
 .headerNm > span {
 	font-weight: bold;
@@ -69,7 +78,7 @@ header > .headerLeft > .headerNm {
 }
 
 header > .headerLeft > .headerLogOut > a {
-	color: #fffad4;
+	color: #fff;
 	margin-left : 10px;
 	
 }
@@ -88,7 +97,7 @@ header > .headerLeft > .headerLogOut > a {
 		
 }
 
-span.companyInfo {color: #fffad4;}
+span.companyInfo {color: #aeadaf;}
 	
 #sectionContainerCenter {
 	width: 100%;

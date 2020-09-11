@@ -6,16 +6,16 @@
 		<div class="msg">${msg}</div>
 		<form class="frm" action="/user/loginProc" method="post">
 			<div>
-				<input type="text" name="user_id" placeholder="아이디">
+				<input type="text" name="user_id" placeholder="ID">
 			</div>
 			<div>
-				<input type="password" name="user_pw" placeholder="비밀번호">
+				<input type="password" name="user_pw" placeholder="PASSWORD">
 			</div>
 			<div>
-				<input type="submit" value="로그인">
+				<input type="submit" value="Sign-In">
 			</div>
 		</form>
-			<a href="/user/join"><button id="joinBtn">회원가입</button></a>
+			<a href="/user/join"><button id="joinBtn">Join-In</button></a>
 	</div>
 	
 </div>
