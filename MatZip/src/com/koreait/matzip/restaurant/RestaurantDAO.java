@@ -44,7 +44,7 @@ public class RestaurantDAO {
 	public List<RestaurantDomain> selRestList() {
 		List<RestaurantDomain> list = new ArrayList();
 		
-		String sql = " select i_rest, nm, lat, lng freom t_restaurant ";
+		String sql = " select i_rest, nm, lat, lng from t_restaurant ";
 		
 		JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
@@ -58,7 +58,7 @@ public class RestaurantDAO {
 					RestaurantDomain vo = new RestaurantDomain();
 					
 					vo.setI_rest(rs.getInt("i_rest"));
-					vo.setNm(rs.getNString("nm"));
+					vo.setNm(rs.getString("nm"));
 					vo.setLat(rs.getDouble("lat"));
 					vo.setLng(rs.getDouble("lng"));
 					
@@ -68,4 +68,58 @@ public class RestaurantDAO {
 		});
 		return list;
 	}
+
+
+
+	public RestaurantDomain selRest(RestaurantVO param) {
+		
+		RestaurantDomain vo = new RestaurantDomain ();
+		
+		String sql = " SELECT A.i_rest, A.nm, A.addr, A.i_user, A.hits "
+				+ ",B.val AS cd_category_nm, IFNULL(C.cnt, 0) as cntFavorite "
+				+ " FROM t_restaurant A "
+				+ " LEFT JOIN c_code_d B "
+				+ " ON A.cd_category = B.cd "
+				+ " AND b.i_m = 1 "
+				+ " LEFT JOIN( "
+				+ " SELECT i_rest, count(i_rest) AS cnt "
+				+ " FROM t_user_favoaite "
+				+ " WHERE i_rest = ? "
+				+ " GROUP BY i_rest "
+				+ " ) C "
+				+ " ON A.i_rest = c.i_rest "
+				+ " WHERE A.i_rest = ? ";
+		
+		JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, param.getI_rest());
+				ps.setInt(2, param.getI_rest());
+				
+			}
+
+			@Override
+			public void executeQuery(ResultSet rs) throws SQLException {
+				
+				if(rs.next()) {
+					vo.setI_rest(param.getI_rest());
+					vo.setNm(rs.getNString("nm"));
+					vo.setAddr(rs.getNString("addr"));
+					vo.setI_user(rs.getInt("i_user"));
+					vo.setCntHits(rs.getInt("hits"));
+					vo.setCd_category_nm(rs.getNString("cd_category_nm"));
+					vo.setCntFavorite(rs.getInt("cntFavorite"));
+					
+				}
+				
+			}
+		});
+		return vo;
+	}
 }
+		
+	
+
+
+

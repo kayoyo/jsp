@@ -3,7 +3,10 @@ package com.koreait.matzip.vo;
 public class RestaurantDomain extends RestaurantVO{
 	
 	private String userNm;
-	private int i_rest;
+	private int cntHits;
+	private int cntFavorite;
+	private String cd_category_nm;
+	
 	
 	public String getUserNm() {
 		return userNm;
@@ -13,14 +16,31 @@ public class RestaurantDomain extends RestaurantVO{
 		this.userNm = userNm;
 	}
 
-	public int getI_rest() {
-		return i_rest;
+	public int getCntHits() {
+		return cntHits;
 	}
 
-	public void setI_rest(int i_rest) {
-		this.i_rest = i_rest;
+	public void setCntHits(int cntHits) {
+		this.cntHits = cntHits;
 	}
 
+	public int getCntFavorite() {
+		return cntFavorite;
+	}
+
+	public void setCntFavorite(int cntFavorite) {
+		this.cntFavorite = cntFavorite;
+	}
+
+	public String getCd_category_nm() {
+		return cd_category_nm;
+	}
+
+	public void setCd_category_nm(String cd_category_nm) {
+		this.cd_category_nm = cd_category_nm;
+	}
+	
+	
 	
 	
 

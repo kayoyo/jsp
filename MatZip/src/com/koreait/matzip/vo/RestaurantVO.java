@@ -8,6 +8,7 @@ public class RestaurantVO {
 	private double lat;
 	private double lng;
 	private int i_user;
+	private int i_rest;
 	private String r_dt;
 	private String m_dt;
 	
@@ -59,6 +60,14 @@ public class RestaurantVO {
 	public void setM_dt(String m_dt) {
 		this.m_dt = m_dt;
 	}
+	public int getI_rest() {
+		return i_rest;
+	}
+	public void setI_rest(int i_rest) {
+		this.i_rest = i_rest;
+	}
+	
+	
 	
 	
 	
