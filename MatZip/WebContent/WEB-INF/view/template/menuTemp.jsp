@@ -7,7 +7,11 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/res/css/common.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <title>${title}</title>
+<c:forEach items="${css}" var="itemCss">
+	<link rel="stylesheet" type="text/css" href="/res/css/${itemCss}.css">
+</c:forEach>
 </head>
 <body>
 	<div id="container">

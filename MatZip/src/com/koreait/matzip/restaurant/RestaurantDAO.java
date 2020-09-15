@@ -13,11 +13,31 @@ import com.koreait.matzip.db.JdbcSelectInterface;
 import com.koreait.matzip.db.JdbcTemplate;
 import com.koreait.matzip.db.JdbcUpdateInterface;
 import com.koreait.matzip.vo.RestaurantDomain;
+import com.koreait.matzip.vo.RestaurantRecommendFoodVO;
 import com.koreait.matzip.vo.RestaurantVO;
 
 
 
 public class RestaurantDAO {
+	
+	
+	public int delRecommendFood(RestaurantRecommendFoodVO param) {
+		
+		String sql = " DELETE FROM t_restaurant_recommend_food WHERE i_rest = ? AND seq = ? ";
+		
+		return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
+
+			@Override
+			public void update(PreparedStatement ps) throws SQLException {
+				
+				ps.setInt(1, param.getI_rest());
+				ps.setInt(2, param.getSeq());
+				
+			}
+			
+		});
+		
+	}
 	
 	public int restRegProc(RestaurantVO param) {
 
@@ -41,6 +61,30 @@ public class RestaurantDAO {
 		});
 
 	}
+	
+	public int insRecommendFood(RestaurantRecommendFoodVO param) {
+		String sql= " insert into t_restaurant_recommend_food "
+				+ " (seq, i_rest, menu_nm, menu_price, menu_pic) "
+				+ " select ifnull(max(seq), 0) + 1, ?, ?, ?, ? "
+				+ " from t_restaurant_recommend_food "
+				+ " where i_rest = ? ";
+		return JdbcTemplate.excuteUpdate(sql, new JdbcUpdateInterface() {
+
+			@Override
+			public void update(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, param.getI_rest());
+				ps.setString(2, param.getMenu_nm());
+				ps.setInt(3, param.getMenu_price());
+				ps.setString(4, param.getMenu_pic());
+				ps.setInt(5, param.getI_rest());
+			}
+			
+		});
+	}
+		
+	
+	
+	
 	public List<RestaurantDomain> selRestList() {
 		List<RestaurantDomain> list = new ArrayList();
 		
@@ -116,6 +160,39 @@ public class RestaurantDAO {
 			}
 		});
 		return vo;
+	}
+	
+	public List<RestaurantRecommendFoodVO> selRecommendFoodList(int i_rest){
+		List<RestaurantRecommendFoodVO> list = new ArrayList();
+		String sql = " select seq, menu_nm, menu_price, menu_pic "
+				+ " from t_restaurant_recommend_food "
+				+ " where i_rest = ? ";
+		
+		JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, i_rest);
+				
+			}
+
+			@Override
+			public void executeQuery(ResultSet rs) throws SQLException {
+				while(rs.next()) {
+					RestaurantRecommendFoodVO vo = new RestaurantRecommendFoodVO();
+					vo.setSeq(rs.getInt("seq"));
+					vo.setMenu_nm(rs.getString("menu_nm"));
+					vo.setMenu_price(rs.getInt("menu_price"));
+					vo.setMenu_pic(rs.getString("menu_pic"));
+					
+					list.add(vo);
+				}
+				
+			}
+			
+		});
+		return list;
+		
 	}
 }
 		
